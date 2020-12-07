@@ -12,14 +12,10 @@ bagContains b target (BagData []) = False
 bagContains b target (BagData ((x,_):xs)) = if (x == target) || (bagContains b target (getBagData b x)) then True else  
     bagContains b target (BagData xs)
 
-
 getBagData :: BagBank -> String -> BagData
 getBagData (BagBank [])  _ = error "Bag not found"
 getBagData (BagBank ((name, bData):bs)) target = if name == target then bData else getBagData (BagBank bs) target
 
-
---shiny purple bags contain 2 pale blue bags, 1 wavy fuchsia bag, 5 pale salmon bags.
---dark silver bags contain no other bags.
 processInput :: [String] -> BagBank
 processInput input = BagBank (processInput' input)
 
@@ -34,7 +30,7 @@ processData ("no":_) = [] --These "contain no other bags"
 processData (n:w1:w2:xs) = ((w1++w2), read n) : (processData (drop 1 xs))
 
 listOfData :: BagBank -> [BagData]
-listOfData (BagBank b) = b |> map snd
+listOfData (BagBank b) = map snd b
 
 part1 :: [String] -> Int
 part1 input = listOfData bank |> count (bagContains bank "shinygold")

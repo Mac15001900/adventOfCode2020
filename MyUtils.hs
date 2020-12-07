@@ -1,6 +1,6 @@
 
 
-module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',repeatFunc,rotateMatrix,splitOn,joinWith,valueBetween, intsBetween) where
+module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',repeatFunc,rotateMatrix,splitOn,joinWith,valueBetween) where
 import Control.Monad
 import Data.List
 import Data.Maybe
