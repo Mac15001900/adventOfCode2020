@@ -1,6 +1,6 @@
 
 
-module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',repeatFunc,rotateMatrix,splitOn,joinWith,valueBetween) where
+module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',repeatFunc,rotateMatrix,splitOn,joinWith,valueBetween, differences, tupleMap, repeatF, removeNothing) where
 import Control.Monad
 import Data.List
 import Data.Maybe
@@ -74,4 +74,19 @@ joinWith a (x:xs) = (x++a)++(joinWith a xs)
 
 valueBetween :: Ord a => (a,a) -> a -> Bool
 valueBetween (low,high) x = x >= low && x <= high
-    
+
+differences :: Num a => [a] -> [a]
+differences [] = []
+differences a = zip (tail a) (init a) |>  tupleMap (-)
+
+tupleMap :: (a->b->c) -> [(a,b)] -> [c]
+tupleMap f = map (\(a,b) -> f a b)
+
+repeatF :: (a->a) -> Int -> a -> a
+repeatF _ 0 x = x
+repeatF f n x = repeatF f (n-1) (f x)
+
+removeNothing :: [Maybe a] -> [a]
+removeNothing [] = []
+removeNothing (Nothing:xs) = removeNothing xs
+removeNothing ((Just a):xs) = a:(removeNothing xs)
