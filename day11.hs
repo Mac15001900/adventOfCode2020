@@ -44,9 +44,9 @@ inBounds r (x,y) = x>=0 && y>=0 && x<length (r!!0) && y<length r
 allPositions :: Room -> [Pos]
 allPositions r = [0..length (r!!0) - 1] |> map (\x-> [0..length r - 1] |> map (\y->(x,y))) |> concat
 
-countSeenTaken :: Room -> SeatData -> Int
-countSeenTaken r (Seat _ []) = 0
-countSeenTaken r (Seat p0 (p:ps)) = current + countSeenTaken r (Seat p0 ps) where current = if getTile r p == Taken then 1 else 0
+countTaken :: Room -> SeatData -> Int
+countTaken r (Seat _ []) = 0
+countTaken r (Seat p0 (p:ps)) = current + countTaken r (Seat p0 ps) where current = if getTile r p == Taken then 1 else 0
 
 --Neighbour finding - part 1
 validNeighbours :: Room -> Pos -> [Pos]
@@ -74,20 +74,20 @@ updateSeat t r (Seat p n) =
     if tile==Free && count == 0 then Just (p,Taken) else
     Nothing where
         tile = getTile r p
-        count = countSeenTaken r (Seat p n)
+        count = countTaken r (Seat p n)
 
 applyUpdates :: Room -> [Maybe (Pos, Tile)] -> Room
 applyUpdates r [] = r
 applyUpdates r (Nothing:xs) = applyUpdates r xs
 applyUpdates r ((Just u):xs) = applyUpdates (setTile r u) xs
 
-updateUntilSame2 :: Int -> [SeatData] -> Room -> Room
-updateUntilSame2 t s r = if r==r' then r else updateUntilSame2 t s r' where r' = s |> map (updateSeat t r) |> applyUpdates r
+updateUntilSame :: Int -> [SeatData] -> Room -> Room
+updateUntilSame t s r = if r==r' then r else updateUntilSame t s r' where r' = s |> map (updateSeat t r) |> applyUpdates r
 
 
 --Solutions
 solution :: Int -> (Room->Pos->[Pos]) -> [String] -> Int
-solution threshold neighbourFunction input = updateUntilSame2 threshold seats room |> concat |> count (==Taken) where
+solution threshold neighbourFunction input = updateUntilSame threshold seats room |> concat |> count (==Taken) where
     room = readInput input
     seats = allPositions room |> map (\pos-> Seat pos (neighbourFunction room pos))
 
