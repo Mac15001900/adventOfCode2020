@@ -9,12 +9,14 @@ import System.IO
 (|>) :: a -> (a->b) -> b
 a |> f = f a
 
+--Takes a file path and a function, runs that function on the file's contents, and prints the function's output. Trims the last line of the file if it's an empty line
 runOnFile :: Show a => String -> ([String]->a) -> IO ()
 runOnFile input start = do
    handle <- openFile input ReadMode
    contents <- hGetContents handle
    let lines = splitOn '\n' contents
-   print $ start lines
+   let linesTrimmed = if last lines == "" then init lines else lines
+   print $ start linesTrimmed
    hClose handle
    
 runOnFile2 :: ([String]->String) -> String -> IO ()
