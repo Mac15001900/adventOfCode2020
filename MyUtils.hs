@@ -1,6 +1,6 @@
 
 
-module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',repeatFunc,rotateMatrix,splitOn,joinWith,valueBetween, differences, tupleMap, repeatF, removeNothing) where
+module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',rotateMatrix,splitOn,joinWith,valueBetween, differences, tupleMap, repeatF, removeNothing, indexes, zipWithIndexes, map2, setElement, empty2) where
 import Control.Monad
 import Data.List
 import Data.Maybe
@@ -27,9 +27,9 @@ runOnFile2 start input = do
    putStrLn $ start lines
    hClose handle
    
-split     :: (Char -> Bool) -> String -> [String]
+split     :: (a -> Bool) -> [a] -> [[a]]
 split p s =  case dropWhile p s of
-                      "" -> []
+                      [] -> []
                       s' -> w : split p s''
                             where (w, s'') = break p s'
 
@@ -50,10 +50,6 @@ unique xs = xs |> reverse |> unique' |> reverse
 unique' :: Eq a => [a] -> [a]
 unique' []     = []
 unique' (x:xs) = if freq xs x >0 then unique' xs else x:unique' xs
-
-repeatFunc :: (a->a) -> Int -> a -> a
-repeatFunc _ 0 a = a
-repeatFunc f n a = f $ repeatFunc f (n-1) a
 
 rotateMatrix :: [[a]] -> [[a]]
 rotateMatrix (x:xs) = foldr largerZip (map (\a->[a]) x) (reverse xs) |> map reverse
@@ -92,3 +88,20 @@ removeNothing :: [Maybe a] -> [a]
 removeNothing [] = []
 removeNothing (Nothing:xs) = removeNothing xs
 removeNothing ((Just a):xs) = a:(removeNothing xs)
+
+indexes :: [a] -> [Int]
+indexes [] = []
+indexes a = [0..(length a)-1]
+
+zipWithIndexes :: [a] -> [(a,Int)]
+zipWithIndexes a = zip a (indexes a)
+
+map2 :: (a->b) -> [[a]] -> [[b]]
+map2 f = map (map f)
+
+empty2 :: Eq a => [[a]] -> Bool
+empty2 xs = not $ exists (/=[]) xs
+
+setElement :: Int -> a -> [a] -> [a]
+setElement i x xs = (take i xs)++[x]++(drop (i+1) xs)
+

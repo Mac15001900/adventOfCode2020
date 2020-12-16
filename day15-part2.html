@@ -1,0 +1,26 @@
+This might take a moment...
+
+<script>
+
+function getNext(history, previousSpoken, number){
+    var index = history[previousSpoken];
+    var nextNumber = 0;
+    if(!isNaN(index)) nextNumber = number - index;
+    return nextNumber;
+}
+
+
+function runFor(end, inputList, inputNumber, inputLength){
+    var history = inputList;
+    var lastSpoken = inputNumber;
+    for(var i=inputLength; i<end; i++){
+        var nextSpoken = getNext(history, lastSpoken, i);
+        history[lastSpoken] = i;
+        lastSpoken = nextSpoken;
+    }
+    return lastSpoken;
+}
+
+console.log(runFor(30000000-1,{6:0,13:1,1:2,15:3,2:4},0,5));
+
+</script>
