@@ -63,7 +63,7 @@ removeRule :: Rule -> [Rule] -> [Rule]
 removeRule r rs = filter (/=r) rs
 
 
-part2 :: [String] -> Int --[(Int,Int)]
-part2 input = input |> dropWhile (not . (isPrefixOf "nearby tickets")) |> tail |> map parseTicket |>  filter (validTicket rules) |>swapRC |> map2 (brokenRules rules) |> map (foldr1 combineRules) |> map (possibleRules rules) |> solve (length rules) |> map ruleName |> zipWithIndexes |> filter (fst .(first (isPrefixOf "departure"))) |> map (\(n,i)-> find (snd .(second (==i))) myTicket) |> removeNothing |> map fst |> foldr1 (*) where
+part2 :: [String] -> Int
+part2 input = input |> dropWhile (not . (isPrefixOf "nearby tickets")) |> tail |> map parseTicket |>  filter (validTicket rules) |> swapRC |> map2 (brokenRules rules) |> map (foldr1 combineRules) |> map (possibleRules rules) |> solve (length rules) |> map ruleName |> zipWithIndexes |> filter ((isPrefixOf "departure") . fst) |> map (\(n,i)-> find ((==i) . snd) myTicket) |> removeNothing |> map fst |> foldr1 (*) where
     rules = input |> splitOn "" |> (!!0) |> map parseRule
     myTicket = input |> splitOn "" |> (!!1) |> (!!1) |> parseTicket |> zipWithIndexes

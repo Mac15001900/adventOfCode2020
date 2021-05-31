@@ -1,6 +1,6 @@
 
 
-module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,unique,unique',rotateMatrix,splitOn,joinWith,valueBetween, differences, tupleMap, repeatF, removeNothing, indexes, zipWithIndexes, map2, setElement, empty2) where
+module MyUtils (runOnFile,runOnFile2,(|>),split,count,freq,exists,(!!?),unique,unique',rotateMatrix,splitOn,joinWith,valueBetween, differences, tupleMap, repeatF, removeNothing, indexes, zipWithIndexes, map2, map3, setElement, setElement2, setElement3, empty2, empty3, directions2D, directions3D, flattenMaybe) where
 import Control.Monad
 import Data.List
 import Data.Maybe
@@ -43,6 +43,8 @@ freq (x:xs) a = (if x==a then 1 else 0) + (freq xs a)
 exists :: (a->Bool) -> [a] -> Bool
 exists p xs = isJust (find p xs) 
 
+(!!?) :: [a] -> Int -> Maybe a
+list !!? index = if index<0 || index>=length list then Nothing else Just (list!!index)
 
 unique :: Eq a  => [a] -> [a]
 unique xs = xs |> reverse |> unique' |> reverse
@@ -80,9 +82,9 @@ differences a = zip (tail a) (init a) |>  tupleMap (-)
 tupleMap :: (a->b->c) -> [(a,b)] -> [c]
 tupleMap f = map (\(a,b) -> f a b)
 
-repeatF :: (a->a) -> Int -> a -> a
-repeatF _ 0 x = x
-repeatF f n x = repeatF f (n-1) (f x)
+repeatF :: Int -> (a->a) -> a -> a
+repeatF 0 _ x = x
+repeatF n f x = repeatF (n-1) f (f x)
 
 removeNothing :: [Maybe a] -> [a]
 removeNothing [] = []
@@ -99,9 +101,40 @@ zipWithIndexes a = zip a (indexes a)
 map2 :: (a->b) -> [[a]] -> [[b]]
 map2 f = map (map f)
 
+map3 :: (a->b) -> [[[a]]] -> [[[b]]]
+map3 f = map (map (map f))
+
 empty2 :: Eq a => [[a]] -> Bool
 empty2 xs = not $ exists (/=[]) xs
 
+empty3 :: Eq a => [[[a]]] -> Bool
+empty3 xss = (map (\xs->not $ exists (/=[]) xs) xss |> and)
+
 setElement :: Int -> a -> [a] -> [a]
 setElement i x xs = (take i xs)++[x]++(drop (i+1) xs)
+
+setElement2 :: Int -> Int -> a -> [[a]] -> [[a]]
+setElement2 i j x xs = (take j xs)++[setElement i x (xs!!j)]++(drop (j+1) xs)
+
+setElement3 :: Int -> Int -> Int -> a -> [[[a]]] -> [[[a]]]
+setElement3 i j k x xs = (take k xs)++[setElement2 i j x (xs!!k)]++(drop (k+1) xs)
+
+directions2D :: [(Int,Int)]
+directions2D = [(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
+
+directions3D :: [(Int,Int,Int)]
+directions3D = [(-1,-1,-1),(-1,-1,0),(-1,-1,1),(-1,0,-1),(-1,0,0),(-1,0,1),(-1,1,-1),(-1,1,0),(-1,1,1),(0,-1,-1),(0,-1,0),(0,-1,1),(0,0,-1),(0,0,1),(0,1,-1),(0,1,0),(0,1,1),(1,-1,-1),(1,-1,0),(1,-1,1),(1,0,-1),(1,0,0),(1,0,1),(1,1,-1),(1,1,0),(1,1,1)]
+
+flattenMaybe :: Maybe (Maybe a) -> Maybe a
+flattenMaybe Nothing = Nothing
+flattenMaybe (Just Nothing) = Nothing
+flattenMaybe (Just (Just a)) = Just a
+
+
+
+
+
+
+
+
 
